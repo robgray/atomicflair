@@ -2,30 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Routing;
+using flair.App_Start;
 
-namespace atomicflair
+namespace flair
 {
-	// Note: For instructions on enabling IIS6 or IIS7 classic mode, 
-	// visit http://go.microsoft.com/?LinkId=9394801
+    // Note: For instructions on enabling IIS6 or IIS7 classic mode, 
+    // visit http://go.microsoft.com/?LinkId=9394801
+    public class MvcApplication : System.Web.HttpApplication
+    {
+        protected void Application_Start()
+        {
+            AreaRegistration.RegisterAllAreas();
 
-	public class MvcApplication : System.Web.HttpApplication
-	{
-		public static void RegisterRoutes(RouteCollection routes)
-		{
-			routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
-
-			routes.MapRoute(
-				"Default",                                              // Route name
-				"{controller}/{action}/{userid}",                           // URL with parameters
-				new { controller = "Home", action = "Index", userid = "0" }  // Parameter defaults
-			);
-		}
-
-		protected void Application_Start()
-		{
-			RegisterRoutes(RouteTable.Routes);
-		}
-	}
+            WebApiConfig.Register(GlobalConfiguration.Configuration);
+            FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
+            RouteConfig.RegisterRoutes(RouteTable.Routes);
+        }
+    }
 }
