@@ -53,7 +53,7 @@ namespace flair.App_Start
                                                  ? "DodgerBlue"
                                                  : user.IsMod ? "Red" : user.IsGod ? "Purple" : "White";
 
-                Bitmap badge = new Bitmap(300, 80);
+                Bitmap badge = new Bitmap(200, 60);
 
                 var originalImagePath = context.Server.MapPath("/images/original/" + userModel.UserId + ".png");
                 if (!System.IO.File.Exists(originalImagePath))
@@ -65,29 +65,31 @@ namespace flair.App_Start
                 }
 
                 var avatarImage = new Bitmap(originalImagePath);
-                avatarImage = Resize(avatarImage, 70);
+                avatarImage = Resize(avatarImage, 60);
 
                 using (var g = Graphics.FromImage((Image)badge))
                 {
+                    var font = new Font("Arial", 10);
+
                     g.SmoothingMode = SmoothingMode.AntiAlias;
                     g.InterpolationMode = InterpolationMode.HighQualityBicubic;
                     g.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
                     g.FillRectangle(Brushes.Black, 0, 0, badge.Width, badge.Height);
-                    g.DrawString(userModel.Name, new Font("Tahoma", 13), Brushes.White, new RectangleF(90, 5, 200, 20));
+                    g.DrawString(userModel.Name, font, Brushes.White, new RectangleF(70, 5, 120, 15));
                     if (!string.IsNullOrEmpty(userModel.SpecialRank))
                     {
-                        g.DrawString(userModel.SpecialRank, new Font("Tahoma", 11),
+                        g.DrawString(userModel.SpecialRank, font,
                                      new SolidBrush(Color.FromName(userModel.SpecialRankColor)),
-                                     new RectangleF(90, 30, 200, 20));
+                                     new RectangleF(70, 20, 120, 15));
 
-                        g.DrawString(userModel.Rank, new Font("Tahoma", 11), Brushes.White,
-                                     new RectangleF(90, 50, 200, 20));
+                        g.DrawString(userModel.Rank, font, Brushes.White,
+                                     new RectangleF(70, 38, 120, 15));
                     }
                     else
                     {
-                        g.DrawString(userModel.Rank, new Font("Tahoma", 11), Brushes.White,
-                                     new RectangleF(90, 30, 200, 20));
+                        g.DrawString(userModel.Rank, font, Brushes.White,
+                                     new RectangleF(70, 23, 120, 20));
                     }
                     g.Flush();
                 }
@@ -122,7 +124,7 @@ namespace flair.App_Start
         private static void CopyRegionIntoImage(Bitmap srcBitmap, ref Bitmap destBitmap)
         {
             var srcRegion = new Rectangle(new Point(0, 0), new Size(new Point(srcBitmap.Width, srcBitmap.Height)));
-            var destRegion = new Rectangle(new Point(5, 5), new Size(new Point(srcBitmap.Width, srcBitmap.Height)));
+            var destRegion = new Rectangle(new Point(0, 0), new Size(new Point(srcBitmap.Width, srcBitmap.Height)));
 
             using (Graphics grD = Graphics.FromImage(destBitmap))
             {
