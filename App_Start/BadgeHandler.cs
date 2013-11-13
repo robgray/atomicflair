@@ -46,7 +46,7 @@ namespace flair.App_Start
             context.Response.ContentType = "image/png";
 
             var badgeFile = context.Server.MapPath("/images/" + userId + ".png");
-            //if (!System.IO.File.Exists(badgeFile))
+            if (!System.IO.File.Exists(badgeFile))
             {
                 var userModel = AtomicUserViewModel.Create(user);
                 userModel.SpecialRankColor = user.IsHeroic
