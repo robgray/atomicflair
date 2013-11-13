@@ -8,7 +8,7 @@ namespace flair.App_Start
         public static void RegisterRoutes(RouteCollection routes)
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
-            routes.IgnoreRoute("{badge}.png");
+            routes.IgnoreRoute("regular/{badge}.png");
 
             routes.MapRoute(
                 name: "Badge",

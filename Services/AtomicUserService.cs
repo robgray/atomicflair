@@ -5,6 +5,7 @@ using System.Net;
 using System.Text;
 using HtmlAgilityPack;
 using flair.Models;
+using System.Text.RegularExpressions;
 
 namespace flair.Services
 {    
@@ -61,6 +62,14 @@ namespace flair.Services
                     {
                         user.Rank =
                             node.NextSibling.NextSibling.NextSibling.NextSibling.NextSibling.NextSibling.InnerText;
+
+                        // pull out the html unicode thingo
+                        var uniMatch = Regex.Match(user.Rank, @"([0-9]{1,4})");
+                        if (uniMatch.Success)
+                        {
+                            var found = uniMatch.Value;
+                            user.Rank = user.Rank.Replace( "&#" + found + "; ","");
+                        }
                     }
                 }
 

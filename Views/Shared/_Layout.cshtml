@@ -3,11 +3,23 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
-    <title></title>    
-    <link href="http://forums.atomicmpc.com.au/style_images/css_9.css" rel="stylesheet" type="text/css" />
-    <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+    <title>Atomic Flair</title>        
+    <script type="text/javascript">try { Typekit.load(); } catch (e) { }</script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script> 
+    <script>
+        less = {
+            env: "development",
+            logLevel: 2
+        }
+    </script>
+    <link rel="stylesheet/less" href="Content/site.less" type="text/less"  />
+    <!-- must go after the LESS stylesheet -->        
+    <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.4.1/less.min.js"></script>
 </head>
-<body>
-    @RenderBody()    
-</body>
+    <body>
+        <div class="container">            
+            @RenderBody()                
+        </div>
+            
+    </body>
 </html>

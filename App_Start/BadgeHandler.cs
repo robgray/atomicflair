@@ -22,14 +22,14 @@ namespace flair.App_Start
             // 9541 = kikz       
 
             var userIdString = context.Request.Url.PathAndQuery;
-            userIdString = userIdString.Substring(1, userIdString.Length - 5);
 
-            if (!Regex.IsMatch(userIdString, "([0-9]{1,6})"))
+            var m = Regex.Match(userIdString, "([0-9]+)");
+            if (!m.Success)
             {
                 return;
             }
-
-            var userId = int.Parse(userIdString);   
+            
+            var userId = int.Parse(m.Value);   
             if (userId == 0)
             {
                 return;
@@ -46,26 +46,14 @@ namespace flair.App_Start
             context.Response.ContentType = "image/png";
 
             var badgeFile = context.Server.MapPath("/images/" + userId + ".png");
-            if (!System.IO.File.Exists(badgeFile))
+            //if (!System.IO.File.Exists(badgeFile))
             {
                 var userModel = AtomicUserViewModel.Create(user);
                 userModel.SpecialRankColor = user.IsHeroic
                                                  ? "DodgerBlue"
                                                  : user.IsMod ? "Red" : user.IsGod ? "Purple" : "White";
 
-                Bitmap badge = new Bitmap(200, 60);
-
-                var originalImagePath = context.Server.MapPath("/images/original/" + userModel.UserId + ".png");
-                if (!System.IO.File.Exists(originalImagePath))
-                {
-                    using (var client = new WebClient())
-                    {
-                        client.DownloadFile(userModel.ImageUrl, originalImagePath);
-                    }
-                }
-
-                var avatarImage = new Bitmap(originalImagePath);
-                avatarImage = Resize(avatarImage, 60);
+                Bitmap badge = new Bitmap(200, 60);                
 
                 using (var g = Graphics.FromImage((Image)badge))
                 {
@@ -76,23 +64,44 @@ namespace flair.App_Start
                     g.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
                     g.FillRectangle(Brushes.Black, 0, 0, badge.Width, badge.Height);
-                    g.DrawString(userModel.Name, font, Brushes.White, new RectangleF(70, 5, 120, 15));
+                    g.DrawString(userModel.Name, font, Brushes.White, new RectangleF(70, 5, 130, 15));
                     if (!string.IsNullOrEmpty(userModel.SpecialRank))
                     {
                         g.DrawString(userModel.SpecialRank, font,
                                      new SolidBrush(Color.FromName(userModel.SpecialRankColor)),
-                                     new RectangleF(70, 20, 120, 15));
+                                     new RectangleF(70, 23, 130, 15));
 
                         g.DrawString(userModel.Rank, font, Brushes.White,
-                                     new RectangleF(70, 38, 120, 15));
+                                     new RectangleF(70, 38, 130, 15));
                     }
                     else
                     {
                         g.DrawString(userModel.Rank, font, Brushes.White,
-                                     new RectangleF(70, 23, 120, 20));
+                                     new RectangleF(70, 23, 130, 20));
                     }
                     g.Flush();
                 }
+
+                Bitmap avatarImage;
+                if (!string.IsNullOrEmpty(user.ImageUrl))
+                {
+                    var originalImagePath = context.Server.MapPath("/images/original/" + userModel.UserId + ".png");
+                    if (!System.IO.File.Exists(originalImagePath))
+                    {
+                        using (var client = new WebClient())
+                        {
+                            client.DownloadFile(userModel.ImageUrl, originalImagePath);
+                        }
+                    }
+
+                    avatarImage = new Bitmap(originalImagePath);
+                }
+                else
+                {
+                    avatarImage = new Bitmap(60, 60);                    
+                }
+                
+                avatarImage = Resize(avatarImage, 60);                
 
                 CopyRegionIntoImage(avatarImage, ref badge);
                 badge.Save(context.Server.MapPath("/images/" + userModel.UserId + ".png"));                
